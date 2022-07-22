@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // faz a chamada para inserir um usuário no banco de dados
@@ -48,7 +49,22 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // faz a chamada para buscar todos os usuários do banco de dados
 func BuscarUsuarios(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Buscando todos os usuários!"))
+	nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
+	db, erro := banco.Conectar()
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	defer db.Close()
+
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	usuarios, erro := repositorio.Buscar(nomeOuNick)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	respostas.JSON(w, http.StatusOK, usuarios)
 }
 
 // faz a chamada para buscar somente um usuário do banco de dados

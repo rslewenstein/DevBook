@@ -99,6 +99,5 @@ func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error){
 		}
 	}
 
-
 	return usuario, nil
 }

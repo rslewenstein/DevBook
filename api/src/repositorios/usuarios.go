@@ -39,7 +39,7 @@ func (repositorio Usuarios) Criar(usuario modelos.Usuario) (uint64, error) {
 	return uint64(ultimoIDInserido), nil
 }
 
-// Buscar pesquisa e pega todos os usuários com o Nome ou Nick solicitado
+// Buscar pesquisa e pega todos os usuários com o Nome ou Nick fornecido
 func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error){
 	nomeOuNick = fmt.Sprintf("%%%s%%", nomeOuNick) // %nomeOuNick%
 
@@ -72,4 +72,33 @@ func (repositorio Usuarios) Buscar(nomeOuNick string) ([]modelos.Usuario, error)
 	}
 
 	return usuarios, nil
+}
+
+// Busca um usuario a partir de um ID fornecido
+func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error){
+	linhas, erro := repositorio.db.Query(
+		"select id, nome, nick, email, criadoEm from usuarios where id = ?", 
+		ID,
+	)
+	if erro != nil{
+		return modelos.Usuario{}, erro
+	}
+	defer linhas.Close()
+
+	var usuario modelos.Usuario
+
+	if linhas.Next(){
+		if erro = linhas.Scan(
+			&usuario.ID,
+			&usuario.Nome,
+			&usuario.Nick,
+			&usuario.Email,
+			&usuario.CriadoEm,
+		); erro != nil{
+			return modelos.Usuario{}, erro
+		}
+	}
+
+
+	return usuario, nil
 }

@@ -16,6 +16,6 @@ func CriarToken(usuarioID uint64) (string, error) {
 	permissoes["usuarioId"] = usuarioID
 	// metodo de assinatura
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissoes)
-	// com o secret estamos assinando
+	// com o secret estamos assinando o token
 	return token.SignedString([]byte(config.SecretKey))
 }

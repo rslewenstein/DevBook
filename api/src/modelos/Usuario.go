@@ -39,6 +39,10 @@ func (usuario *Usuario) validar(etapa string) error {
 		return errors.New("o email é obrigatório")
 	}
 
+	if usuario.Email == "" {
+		return errors.New("o e-mail inserido é invalido")
+	}
+
 	if etapa == "cadastro" && usuario.Senha == "" {
 		return errors.New("a senha é obrigatório")
 	}
